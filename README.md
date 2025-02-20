@@ -22,8 +22,7 @@ nope: Represents false.
 
 
 
-
-                                                                                  RULES:
+RULES:
 IDENTIFIERS:
 1. Must start with a lowercase letter or underscore.
 2. Can contain letters, numbers, and underscores.
