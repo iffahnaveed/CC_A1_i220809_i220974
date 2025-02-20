@@ -1,0 +1,1209 @@
+ // private static final String OPERATOR = "[=+\\-*/%]";
+/*package cc_A1;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+public class Lexer {
+	  private static final String KEYWORD = "\\b(int|return|void|show|global|local|onoff|tinytxt)\\b";
+		
+		 * private static final String AGAINPLS= "\\b(aslongas|traverse)\\b"; private
+		 * static final String DECIDER = "\\b(when|otherwise)\\b"; private static final
+		 * String ONOFF = "\\b(yep|nope)\\b"; private static final String IDENTIFIER =
+		 * "\\b(?!global|local)[a-z_][a-z0-9_]*\\b"; private static final String DECI =
+		 * "\\b\\d+\\.\\d{1,5}\\b"; // Matches valid decimal numbers (1-5 decimal
+		 * places) private static final String DISCRETE= "\\b\\d+\\b"; // Matches whole
+		 * numbers like 2, 100, etc. private static final String TINYTXT = "'[^']'";
+		 * private static final String QUOTE = "\"([^\"\\\\]|\\\\.)*\""; private static
+		 * final String HINT = "===.*|<<<[\\s\\S]*?>>>";
+		 
+
+  
+    private static final String COMMASHOMMA = "[(){};,]";
+    private static final String BOOSTER = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+    private static final String WHITESPACE = "\\s+";
+
+    private static final Pattern TOKEN_PATTERNS = Pattern.compile(
+    		"(?<BOOSTER>" + BOOSTER + ")|"
+    		+ "(?<HINT>" + HINT + ")|"+
+    	    "(?<KEYWORD>" + KEYWORD + ")|"
+    	    + "(?<AGAINPLS>" +AGAINPLS + ")|"
+    	    + "(?<DECIDER>" + DECIDER + ")|"
+    	    + "(?<ONOFF>" + ONOFF + ")|"
+    	    + "(?<IDENTIFIER>" + IDENTIFIER + ")|"
+    	    + "(?<DECI>" + DECI + ")|"
+    	    + "(?<DISCRETE>" + DISCRETE + ")|"
+    	    + "(?<TINYTXT>" +TINYTXT + ")|"
+    	    + "(?<QUOTE>" + QUOTE + ")|"
+    	    
+    	    + "(?<OPERATOR>" + OPERATOR + ")|"
+    	    + "(?<COMMASHOMMA>" +COMMASHOMMA + ")|"
+    	   
+    	   // + "(?<HINT>" + HINT + ")|"
+    	    + "(?<WHITESPACE>" + WHITESPACE + ")"
+    	);
+
+
+
+    public static List<Token> tokenize(String input) {
+        List<Token> tokens = new ArrayList<>();
+        Matcher matcher = TOKEN_PATTERNS.matcher(input);
+
+        while (matcher.find()) {
+            if (matcher.group("KEYWORD") != null)
+                tokens.add(new Token(TokenType.KEYWORD, matcher.group()));
+            else if (matcher.group("AGAINPLS") != null)
+                tokens.add(new Token(TokenType.AGAINPLS, matcher.group()));
+            else if (matcher.group("DECIDER") != null)
+                tokens.add(new Token(TokenType.DECIDER, matcher.group()));
+            else if (matcher.group("ONOFF") != null)
+                tokens.add(new Token(TokenType.ONOFF, matcher.group()));
+            else if (matcher.group("IDENTIFIER") != null)
+                tokens.add(new Token(TokenType.IDENTIFIER, matcher.group()));
+            else if (matcher.group("DECI") != null)  // Check DECIMAL before INTEGER
+                tokens.add(new Token(TokenType.DECI, matcher.group()));
+            else if (matcher.group("DISCRETE") != null)
+                tokens.add(new Token(TokenType.DISCRETE, matcher.group()));
+            else if (matcher.group("TINYTXT") != null)
+                tokens.add(new Token(TokenType.TINYTXT, matcher.group()));
+            else if (matcher.group("QUOTE") != null)
+                tokens.add(new Token(TokenType.QUOTE, matcher.group()));
+            else if (matcher.group("OPERATOR") != null)
+                tokens.add(new Token(TokenType.OPERATOR, matcher.group()));
+            else if (matcher.group("COMMASHOMMA") != null)
+                tokens.add(new Token(TokenType.COMMASHOMMA, matcher.group()));
+            else if (matcher.group("BOOSTER") != null)
+                tokens.add(new Token(TokenType.BOOSTER, matcher.group()));
+            else if (matcher.group("HINT") != null)
+                tokens.add(new Token(TokenType.HINT, matcher.group()));
+          //  else if (matcher.group("INVALID_DECIMAL") != null)
+            	//System.out.println("⚠ Error: " + matcher.group() + " exceeds the allowed 5 decimal places and was not tokenized.");
+            //	tokens.add(new Token(TokenType.COMMENT, matcher.group()));        
+        }
+        
+        
+        for (Token token : tokens) {
+            if (token.getType() == TokenType.DECI) {
+                if (!token.getValue().matches("\\b\\d+\\.\\d{1,5}\\b")) {  // Matches more than 5 decimal places
+                    System.out.println("⚠ Error: " + token.getValue() + " exceeds 5 decimal places and was not tokenized.");
+                    tokens.remove(token);
+                }
+            }
+        }
+        
+        return tokens;
+    }
+
+
+    public static void main(String[] args) {
+        InputStream inputStream = Lexer.class.getResourceAsStream("input.txt");
+        if (inputStream == null) {
+            System.out.println("Error reading file: input.fi");
+            return;
+        }
+
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            return;
+        }
+
+        List<Token> tokens = tokenize(content.toString());
+
+        System.out.println("Tokens:");
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+
+        System.out.println("\nTotal number of tokens: " + tokens.size());
+    }
+    }
+*/
+
+
+package cc_A1;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+class State {
+    int id;
+    Map<Character, List<State>> transitions = new HashMap<>();
+    boolean isFinal;
+    
+    public State(int id) {
+        this.id = id;
+    }
+    
+    public void addTransition(char symbol, State state) {
+        transitions.computeIfAbsent(symbol, k -> new ArrayList<>()).add(state);
+    }
+}
+
+class NFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    
+    public NFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+
+class DFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    
+    public DFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+class RegexToNFAConverter {
+    private static int stateCounter = 0;
+    
+    public static NFA convert(String regex) {
+        State start = new State(stateCounter++);
+        State end = new State(stateCounter++);
+        start.addTransition(regex.charAt(0), end);
+        NFA nfa = new NFA(start);
+        nfa.states.add(end);
+        end.isFinal = true;
+        return nfa;
+    }
+}
+class NFAToDFAConverter {
+    public static DFA convert(NFA nfa) {
+        Map<Set<State>, State> dfaStates = new HashMap<>();
+        Queue<Set<State>> queue = new LinkedList<>();
+        Set<State> startSet = epsilonClosure(Set.of(nfa.start));
+        State startState = new State(0);
+        dfaStates.put(startSet, startState);
+        queue.add(startSet);
+        DFA dfa = new DFA(startState);
+        
+        while (!queue.isEmpty()) {
+            Set<State> currentSet = queue.poll();
+            State dfaState = dfaStates.get(currentSet);
+            
+            for (char symbol = 'a'; symbol <= 'z'; symbol++) {
+                Set<State> nextSet = move(currentSet, symbol);
+                nextSet = epsilonClosure(nextSet);
+                if (!nextSet.isEmpty() && !dfaStates.containsKey(nextSet)) {
+                    State newState = new State(dfaStates.size());
+                    dfaStates.put(nextSet, newState);
+                    queue.add(nextSet);
+                    dfa.states.add(newState);
+                }
+                if (!nextSet.isEmpty()) {
+                    dfaState.addTransition(symbol, dfaStates.get(nextSet));
+                }
+            }
+        }
+        return dfa;
+    }
+    
+    private static Set<State> epsilonClosure(Set<State> states) {
+        Set<State> closure = new HashSet<>(states);
+        Stack<State> stack = new Stack<>();
+        stack.addAll(states);
+        while (!stack.isEmpty()) {
+            State state = stack.pop();
+            if (state.transitions.containsKey('\0')) {
+                for (State next : state.transitions.get('\0')) {
+                    if (!closure.contains(next)) {
+                        closure.add(next);
+                        stack.push(next);
+                    }
+                }
+            }
+        }
+        return closure;
+    }
+    
+    private static Set<State> move(Set<State> states, char symbol) {
+        Set<State> result = new HashSet<>();
+        for (State state : states) {
+            if (state.transitions.containsKey(symbol)) {
+                result.addAll(state.transitions.get(symbol));
+            }
+        }
+        return result;
+    }
+}
+
+class SymbolTableEntry {
+    String name, type, scope;
+    int memoryAddress;
+
+    public SymbolTableEntry(String name, String type, String scope, int memoryAddress) {
+        this.name = name;
+        this.type = type;
+        this.scope = scope;
+        this.memoryAddress = memoryAddress;
+    }
+}
+
+class SymbolTable {
+    private Map<String, SymbolTableEntry> table = new LinkedHashMap<>();
+    private int addressCounter = 1000;  // Simulating memory locations
+
+    public void insert(String name, String type, String scope) {
+        if (!table.containsKey(name)) {
+            table.put(name, new SymbolTableEntry(name, type, scope, addressCounter++));
+        }
+    }
+
+    public void printTable() {
+        System.out.println("\nSymbol Table:");
+        System.out.printf("%-20s %-20s %-10s %-10s\n", "Symbol", "Type", "Scope", "Memory Address");
+        System.out.println("----------------------------------------------------------------------------");
+        for (SymbolTableEntry entry : table.values()) {
+        	 System.out.printf("%-20s %-20s %-10s 0x%X\n", entry.name, entry.type, entry.scope, entry.memoryAddress);
+        }
+    }
+}
+public class Lexer {
+    private static final SymbolTable symbolTable = new SymbolTable();
+
+    private static final String KEYWORD = "\\b(int|return|void|show|global|local|boolean|character)\\b";
+    private static final String AGAINPLS = "\\b(aslongas|traverse)\\b";
+    private static final String DECIDER = "\\b(when|otherwise)\\b";
+    private static final String IDENTIFIER = "\\b(?!global|local)[a-z_][a-z0-9_]*\\b";
+    private static final String DECI = "\\b\\d+\\.\\d{1,5}\\b";
+    private static final String DISCRETE = "\\b\\d+\\b";
+    private static final String TINYTXT = "'[^']'";
+    private static final String QUOTE = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String HINT = "===.*|<<<[\\s\\S]*?>>?";
+    private static final String OPERATOR = "[=+\\-*/%]";
+    private static final String COMMASHOMMA = "[(){};,]";
+    private static final String BOOSTER = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+    private static final String WHITESPACE = "\\s+";
+
+    private static final Pattern TOKEN_PATTERNS = Pattern.compile(
+        "(?<BOOSTER>" + BOOSTER + ")|"
+        + "(?<HINT>" + HINT + ")|"
+        + "(?<KEYWORD>" + KEYWORD + ")|"
+        + "(?<AGAINPLS>" + AGAINPLS + ")|"
+        + "(?<DECIDER>" + DECIDER + ")|"
+        + "(?<IDENTIFIER>" + IDENTIFIER + ")|"
+        + "(?<DECI>" + DECI + ")|"
+        + "(?<DISCRETE>" + DISCRETE + ")|"
+        + "(?<TINYTXT>" + TINYTXT + ")|"
+        + "(?<QUOTE>" + QUOTE + ")|"
+        + "(?<OPERATOR>" + OPERATOR + ")|"
+        + "(?<COMMASHOMMA>" + COMMASHOMMA + ")|"
+        + "(?<WHITESPACE>" + WHITESPACE + ")"
+    );
+    private static String regexToRE(String regex) {
+        return regex.replaceAll("\\\\b", "")
+                    .replaceAll("\\\\s", "(space|tab|newline)+")
+                    .replaceAll("\\\\d", "[0-9]")
+                    .replaceAll("\\\\w", "[a-zA-Z0-9_]");
+    }
+    private static void printTransitionTable(DFA dfa) {
+        System.out.println("DFA Transition Table:");
+        for (State state : dfa.states) {
+            for (Map.Entry<Character, List<State>> entry : state.transitions.entrySet()) {
+                for (State nextState : entry.getValue()) {
+                    System.out.println("State " + state.id + " -- " + entry.getKey() + " --> State " + nextState.id);
+                }
+            }
+        }
+    }
+    private static final String[] REGEX_PATTERNS = {
+            "(int|return|void|show|global|local|boolean|character)",
+            "(aslongas|traverse)",
+            "(when|otherwise)",
+            "(?!global|local)[a-z_][a-z0-9_]*",
+            "[0-9]+\\.[0-9]{1,5}",
+            "[0-9]+",
+            "'[^']'",
+            "\"([^\"\\\\]|\\\\.)*\"",
+            "===.*|<<<[(space|tab|newline)+\\S]*?>>?",
+           // "[=+\-*/%]",
+            "[(){};,]",
+            "[0-9]+(\\.[0-9]{1,5})?(space|tab|newline)+*\\^(space|tab|newline)+*[0-9]+(\\.[0-9]{1,5})?",
+            "(space|tab|newline)+"
+        };
+    public static List<Token> tokenize(String input) {
+        List<Token> tokens = new ArrayList<>();
+        Matcher matcher = TOKEN_PATTERNS.matcher(input);
+        String scope = "global"; // Start with global scope
+        int blockDepth = 0; // To track block level depth (inside nested blocks)
+
+        while (matcher.find()) {
+            // Update scope based on curly braces
+            if (matcher.group("COMMASHOMMA") != null) {
+                String match = matcher.group("COMMASHOMMA");
+                if (match.equals("{")) {
+                    blockDepth++;
+                    scope = "local"; // Entering a block means local scope
+                } else if (match.equals("}")) {
+                    blockDepth--;
+                    if (blockDepth == 0) {
+                        scope = "global"; // Exiting the block returns to global scope
+                    }
+                }
+            }
+
+            // Process each token based on the matching groups
+            if (matcher.group("KEYWORD") != null) {
+                tokens.add(new Token(TokenType.KEYWORD, matcher.group()));
+                if (matcher.group().equals("local")) {
+                    scope = "local"; // explicitly set scope if `local` is encountered
+                }
+                symbolTable.insert(matcher.group(), "keyword", scope);
+            } else if (matcher.group("AGAINPLS") != null)
+                tokens.add(new Token(TokenType.AGAINPLS, matcher.group()));
+            else if (matcher.group("DECIDER") != null)
+                tokens.add(new Token(TokenType.DECIDER, matcher.group()));
+            else if (matcher.group("IDENTIFIER") != null) {
+                tokens.add(new Token(TokenType.IDENTIFIER, matcher.group()));
+                symbolTable.insert(matcher.group(), "identifier", scope);
+            } else if (matcher.group("DECI") != null) {
+                tokens.add(new Token(TokenType.DECI, matcher.group()));
+            } else if (matcher.group("DISCRETE") != null) {
+                tokens.add(new Token(TokenType.DISCRETE, matcher.group()));
+                symbolTable.insert(matcher.group(), "discrete", scope);
+            } else if (matcher.group("TINYTXT") != null) {
+                tokens.add(new Token(TokenType.TINYTXT, matcher.group()));
+            } else if (matcher.group("QUOTE") != null) {
+                tokens.add(new Token(TokenType.QUOTE, matcher.group()));
+                symbolTable.insert(matcher.group(), "quote", scope);
+            } else if (matcher.group("HINT") != null) {
+                tokens.add(new Token(TokenType.HINT, matcher.group()));
+                symbolTable.insert(matcher.group(), "comment", scope);
+            } else if (matcher.group("BOOSTER") != null) {
+                tokens.add(new Token(TokenType.BOOSTER, matcher.group()));
+            } else if (matcher.group("OPERATOR") != null) {
+                tokens.add(new Token(TokenType.OPERATOR, matcher.group()));
+                symbolTable.insert(matcher.group(), "operator", scope);
+            } else if (matcher.group("COMMASHOMMA") != null) {
+                tokens.add(new Token(TokenType.COMMASHOMMA, matcher.group()));
+            }
+        }
+        return tokens;
+    }
+
+    public static void main(String[] args) {
+    	  System.out.println("Regular Expressions:");
+          System.out.println("KEYWORD: " + regexToRE(KEYWORD));
+          System.out.println("AGAINPLS: " + regexToRE(AGAINPLS));
+          System.out.println("DECIDER: " + regexToRE(DECIDER));
+          System.out.println("IDENTIFIER: " + regexToRE(IDENTIFIER));
+          System.out.println("DECI: " + regexToRE(DECI));
+          System.out.println("DISCRETE: " + regexToRE(DISCRETE));
+          System.out.println("TINYTXT: " + regexToRE(TINYTXT));
+          System.out.println("QUOTE: " + regexToRE(QUOTE));
+          System.out.println("HINT: " + regexToRE(HINT));
+          System.out.println("OPERATOR: " + regexToRE(OPERATOR));
+          System.out.println("COMMASHOMMA: " + regexToRE(COMMASHOMMA));
+          System.out.println("BOOSTER: " + regexToRE(BOOSTER));
+          System.out.println("WHITESPACE: " + regexToRE(WHITESPACE));
+        InputStream inputStream = Lexer.class.getResourceAsStream("input.txt");
+        if (inputStream == null) {
+            System.out.println("Error reading file: input.txt");
+            return;
+        }
+
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            return;
+        }
+
+        List<Token> tokens = tokenize(content.toString());
+        System.out.println("Tokens:");
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+
+        System.out.println("\nTotal number of tokens: " + tokens.size());
+        symbolTable.printTable();
+        ErrorHandler.checkForErrors(tokens, content.toString());
+
+      //  String regex = "\\b(when|otherwise)\\b";  // Example regex // Example regex, use your pattern here
+
+        // Step 1: Convert Regex to NFA
+      //  nfa nfa = cc_A1.nfa.regexToNFA(regex);
+
+        // Step 2: Convert NFA to DFA
+     //   Set<Set<nfa.State>> dfaStates = dfa.nfaToDFA(nfa);
+
+        // Step 3: Count total states in NFA and DFA
+      //  System.out.println("NFA States: " + nfa.getStates().size());
+      //  System.out.println("DFA States: " + dfaStates.size());
+        for (String regex : REGEX_PATTERNS) {
+            NFA nfa = RegexToNFAConverter.convert(regex);
+            DFA dfa = NFAToDFAConverter.convert(nfa);
+            printTransitionTable(dfa);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package cc_A1;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+class State {
+    int id;
+    Map<Character, List<State>> transitions = new HashMap<>();
+    boolean isFinal;
+    
+    public State(int id) {
+        this.id = id;
+    }
+    
+    public void addTransition(char symbol, State state) {
+        transitions.computeIfAbsent(symbol, k -> new ArrayList<>()).add(state);
+    }
+}
+
+class NFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    Set<State> finalStates = new HashSet<>();
+    
+    public NFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+
+class DFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    
+    public DFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+
+class RegexToNFAConverter {
+    private static int stateCounter = 0;
+    
+    public static NFA convert(String regex) {
+        String[] tokens = regex.split("\\|");
+        State start = new State(stateCounter++);
+        State end = new State(stateCounter++);
+        NFA nfa = new NFA(start);
+        nfa.states.add(end);
+        nfa.finalStates.add(end);
+        
+        for (String token : tokens) {
+            State tokenStart = new State(stateCounter++);
+            State tokenEnd = new State(stateCounter++);
+            nfa.states.add(tokenStart);
+            nfa.states.add(tokenEnd);
+            start.addTransition('\0', tokenStart);
+            tokenEnd.addTransition('\0', end);
+            
+            State prev = tokenStart;
+            for (char c : token.toCharArray()) {
+                State next = new State(stateCounter++);
+                prev.addTransition(c, next);
+                nfa.states.add(next);
+                prev = next;
+            }
+            prev.addTransition('\0', tokenEnd);
+        }
+        return nfa;
+    }
+}
+class NFAToDFAConverter {
+    public static DFA convert(NFA nfa) {
+        Map<Set<State>, State> dfaStates = new HashMap<>();
+        Queue<Set<State>> queue = new LinkedList<>();
+        Set<State> startSet = epsilonClosure(Set.of(nfa.start));
+        State startState = new State(0);
+        dfaStates.put(startSet, startState);
+        queue.add(startSet);
+        DFA dfa = new DFA(startState);
+        
+        while (!queue.isEmpty()) {
+            Set<State> currentSet = queue.poll();
+            State dfaState = dfaStates.get(currentSet);
+            
+            for (char symbol = ' '; symbol <= '~'; symbol++) { // Handle all printable ASCII chars
+                Set<State> nextSet = move(currentSet, symbol);
+                nextSet = epsilonClosure(nextSet);
+                if (!nextSet.isEmpty() && !dfaStates.containsKey(nextSet)) {
+                    State newState = new State(dfaStates.size());
+                    dfaStates.put(nextSet, newState);
+                    queue.add(nextSet);
+                    dfa.states.add(newState);
+                    if (containsFinalState(nextSet, nfa.finalStates)) {
+                        newState.isFinal = true;
+                    }
+                }
+                if (!nextSet.isEmpty()) {
+                    dfaState.addTransition(symbol, dfaStates.get(nextSet));
+                }
+            }
+        }
+        return dfa;
+    }
+    
+    private static boolean containsFinalState(Set<State> states, Set<State> finalStates) {
+        for (State state : states) {
+            if (finalStates.contains(state)) return true;
+        }
+        return false;
+    }
+    
+    private static Set<State> epsilonClosure(Set<State> states) {
+        Set<State> closure = new HashSet<>(states);
+        Stack<State> stack = new Stack<>();
+        stack.addAll(states);
+        while (!stack.isEmpty()) {
+            State state = stack.pop();
+            if (state.transitions.containsKey('\0')) {
+                for (State next : state.transitions.get('\0')) {
+                    if (!closure.contains(next)) {
+                        closure.add(next);
+                        stack.push(next);
+                    }
+                }
+            }
+        }
+        return closure;
+    }
+    
+    private static Set<State> move(Set<State> states, char symbol) {
+        Set<State> result = new HashSet<>();
+        for (State state : states) {
+            if (state.transitions.containsKey(symbol)) {
+                result.addAll(state.transitions.get(symbol));
+            }
+        }
+        return result;
+    }
+}
+class SymbolTableEntry {
+    String name, type, scope;
+    int memoryAddress;
+
+    public SymbolTableEntry(String name, String type, String scope, int memoryAddress) {
+        this.name = name;
+        this.type = type;
+        this.scope = scope;
+        this.memoryAddress = memoryAddress;
+    }
+}
+
+class SymbolTable {
+    private Map<String, SymbolTableEntry> table = new LinkedHashMap<>();
+    private int addressCounter = 1000;  // Simulating memory locations
+
+    public void insert(String name, String type, String scope) {
+        if (!table.containsKey(name)) {
+            table.put(name, new SymbolTableEntry(name, type, scope, addressCounter++));
+        }
+    }
+
+    public void printTable() {
+        System.out.println("\nSymbol Table:");
+        System.out.printf("%-20s %-20s %-10s %-10s\n", "Symbol", "Type", "Scope", "Memory Address");
+        System.out.println("----------------------------------------------------------------------------");
+        for (SymbolTableEntry entry : table.values()) {
+        	 System.out.printf("%-20s %-20s %-10s 0x%X\n", entry.name, entry.type, entry.scope, entry.memoryAddress);
+        }
+    }
+}
+public class Lexer {
+    private static final SymbolTable symbolTable = new SymbolTable();
+
+    private static final String KEYWORD = "\\b(int|return|void|show|global|local|onoff|tinytxt)\\b";
+    private static final String AGAINPLS = "\\b(aslongas|traverse)\\b";
+    private static final String DECIDER = "\\b(when|otherwise)\\b";
+    private static final String IDENTIFIER = "\\b(?!global|local)[a-z_][a-z0-9_]*\\b";
+    private static final String DECI = "\\b\\d+\\.\\d{1,5}\\b";
+    private static final String DISCRETE = "\\b\\d+\\b";
+    private static final String TINYTXT = "'[^']'";
+    private static final String ONOFF = "\\b(yep|nope)\\b";
+
+    private static final String QUOTE = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String HINT = "===.*|<<<[\\s\\S]*?>>?";
+    private static final String OPERATOR = "[=+\\-*/%]";
+    private static final String COMMASHOMMA = "[(){};,]";
+    private static final String BOOSTER = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+    private static final String WHITESPACE = "\\s+";
+
+    private static final Pattern TOKEN_PATTERNS = Pattern.compile(
+        "(?<BOOSTER>" + BOOSTER + ")|"
+        + "(?<HINT>" + HINT + ")|"
+        + "(?<KEYWORD>" + KEYWORD + ")|"
+        + "(?<AGAINPLS>" + AGAINPLS + ")|"
+        + "(?<DECIDER>" + DECIDER + ")|"
+          + "(?<ONOFF>" + ONOFF + ")|"
+
+        + "(?<IDENTIFIER>" + IDENTIFIER + ")|"
+        + "(?<DECI>" + DECI + ")|"
+        + "(?<DISCRETE>" + DISCRETE + ")|"
+        + "(?<TINYTXT>" + TINYTXT + ")|"
+        + "(?<QUOTE>" + QUOTE + ")|"
+        + "(?<OPERATOR>" + OPERATOR + ")|"
+        + "(?<COMMASHOMMA>" + COMMASHOMMA + ")|"
+        + "(?<WHITESPACE>" + WHITESPACE + ")"
+    );
+    private static String regexToRE(String regex) {
+        return regex.replaceAll("\\\\b", "")
+                    .replaceAll("\\\\s", "(space|tab|newline)+")
+                    .replaceAll("\\\\d", "[0-9]")
+                    .replaceAll("\\\\w", "[a-zA-Z0-9_]");
+    }
+    private static void printTransitionTable(DFA dfa) {
+        System.out.println("DFA Transition Table:");
+        for (State state : dfa.states) {
+            for (Map.Entry<Character, List<State>> entry : state.transitions.entrySet()) {
+                for (State nextState : entry.getValue()) {
+                    System.out.println("State " + state.id + " -- " + entry.getKey() + " --> State " + nextState.id);
+                }
+            }
+        }
+    }
+    private static final String REGEX_PATTERN = "int|return|void|show|global|local|onoff|tinytxt";
+    private static final String REGEX_PATTERN1 = "aslongas|traverse";
+    private static final String REGEX_PATTERN2 = "[=+\\-*/%]";
+    private static final String REGEX_PATTERN3 = " when|otherwise";
+    private static final String REGEX_PATTERN4 = "?!global|local)[a-z_][a-z0-9_]*";
+    private static final String REGEX_PATTERN5 = "\\d+\\.\\d{1,5}";
+    private static final String REGEX_PATTERN6 = "\\b\\d+\\b";
+    private static final String REGEX_PATTERN7 = "'[^']'";
+    private static final String REGEX_PATTERN8 = "([^\"\\\\]|\\\\.)*";
+    private static final String REGEX_PATTERN9 = "===.*|<<<[\\s\\S]*?>>?";
+    private static final String REGEX_PATTERN10 = "[=+\\-*/%]";
+    private static final String REGEX_PATTERN11 = "[(){};,]";
+    private static final String REGEX_PATTERN12 = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+
+
+    public static List<Token> tokenize(String input) {
+        List<Token> tokens = new ArrayList<>();
+        Matcher matcher = TOKEN_PATTERNS.matcher(input);
+        String scope = "global"; // Start with global scope
+        int blockDepth = 0; // To track block level depth (inside nested blocks)
+
+        while (matcher.find()) {
+            // Update scope based on curly braces
+            if (matcher.group("COMMASHOMMA") != null) {
+                String match = matcher.group("COMMASHOMMA");
+                if (match.equals("{")) {
+                    blockDepth++;
+                    scope = "local"; // Entering a block means local scope
+                } else if (match.equals("}")) {
+                    blockDepth--;
+                    if (blockDepth == 0) {
+                        scope = "global"; // Exiting the block returns to global scope
+                    }
+                }
+            }
+
+            // Process each token based on the matching groups
+            if (matcher.group("KEYWORD") != null) {
+                tokens.add(new Token(TokenType.KEYWORD, matcher.group()));
+                if (matcher.group().equals("local")) {
+                    scope = "local"; // explicitly set scope if `local` is encountered
+                }
+                symbolTable.insert(matcher.group(), "keyword", scope);
+            } else if (matcher.group("AGAINPLS") != null)
+                tokens.add(new Token(TokenType.AGAINPLS, matcher.group()));
+            else if (matcher.group("DECIDER") != null)
+                tokens.add(new Token(TokenType.DECIDER, matcher.group()));
+            else if (matcher.group("ONOFF") != null)
+                tokens.add(new Token(TokenType.ONOFF, matcher.group()));
+
+            else if (matcher.group("IDENTIFIER") != null) {
+                tokens.add(new Token(TokenType.IDENTIFIER, matcher.group()));
+                symbolTable.insert(matcher.group(), "identifier", scope);
+            } else if (matcher.group("DECI") != null) {
+                tokens.add(new Token(TokenType.DECI, matcher.group()));
+            } else if (matcher.group("DISCRETE") != null) {
+                tokens.add(new Token(TokenType.DISCRETE, matcher.group()));
+                symbolTable.insert(matcher.group(), "discrete", scope);
+            } else if (matcher.group("TINYTXT") != null) {
+                tokens.add(new Token(TokenType.TINYTXT, matcher.group()));
+            } else if (matcher.group("QUOTE") != null) {
+                tokens.add(new Token(TokenType.QUOTE, matcher.group()));
+                symbolTable.insert(matcher.group(), "quote", scope);
+            } else if (matcher.group("HINT") != null) {
+                tokens.add(new Token(TokenType.HINT, matcher.group()));
+                symbolTable.insert(matcher.group(), "comment", scope);
+            } else if (matcher.group("BOOSTER") != null) {
+                tokens.add(new Token(TokenType.BOOSTER, matcher.group()));
+            } else if (matcher.group("OPERATOR") != null) {
+                tokens.add(new Token(TokenType.OPERATOR, matcher.group()));
+                symbolTable.insert(matcher.group(), "operator", scope);
+            } else if (matcher.group("COMMASHOMMA") != null) {
+                tokens.add(new Token(TokenType.COMMASHOMMA, matcher.group()));
+            }
+        }
+        return tokens;
+    }
+
+    public static void main(String[] args) {
+    	  System.out.println("Regular Expressions:");
+          System.out.println("KEYWORD: " + regexToRE(KEYWORD));
+          System.out.println("AGAINPLS: " + regexToRE(AGAINPLS));
+          System.out.println("DECIDER: " + regexToRE(DECIDER));
+          System.out.println("IDENTIFIER: " + regexToRE(IDENTIFIER));
+          System.out.println("DECI: " + regexToRE(DECI));
+          System.out.println("DISCRETE: " + regexToRE(DISCRETE));
+          System.out.println("TINYTXT: " + regexToRE(TINYTXT));
+          System.out.println("QUOTE: " + regexToRE(QUOTE));
+          System.out.println("HINT: " + regexToRE(HINT));
+          System.out.println("OPERATOR: " + regexToRE(OPERATOR));
+          System.out.println("COMMASHOMMA: " + regexToRE(COMMASHOMMA));
+          System.out.println("BOOSTER: " + regexToRE(BOOSTER));
+          System.out.println("WHITESPACE: " + regexToRE(WHITESPACE));
+        InputStream inputStream = Lexer.class.getResourceAsStream("input.txt");
+        if (inputStream == null) {
+            System.out.println("Error reading file: input.txt");
+            return;
+        }
+
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            return;
+        }
+
+        List<Token> tokens = tokenize(content.toString());
+        System.out.println("Tokens:");
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+
+        System.out.println("\nTotal number of tokens: " + tokens.size());
+        symbolTable.printTable();
+        ErrorHandler.checkForErrors(tokens, content.toString());
+
+      //  String regex = "\\b(when|otherwise)\\b";  // Example regex // Example regex, use your pattern here
+
+        // Step 1: Convert Regex to NFA
+      //  nfa nfa = cc_A1.nfa.regexToNFA(regex);
+
+        // Step 2: Convert NFA to DFA
+     //   Set<Set<nfa.State>> dfaStates = dfa.nfaToDFA(nfa);
+
+        // Step 3: Count total states in NFA and DFA
+      //  System.out.println("NFA States: " + nfa.getStates().size());
+      //  System.out.println("DFA States: " + dfaStates.size());
+        NFA nfa = RegexToNFAConverter.convert(REGEX_PATTERN);
+        NFA nfa1 = RegexToNFAConverter.convert(REGEX_PATTERN1);
+        NFA nfa2 = RegexToNFAConverter.convert(REGEX_PATTERN2);
+        NFA nfa3 = RegexToNFAConverter.convert(REGEX_PATTERN3);
+        NFA nfa4 = RegexToNFAConverter.convert(REGEX_PATTERN4);
+        NFA nfa5 = RegexToNFAConverter.convert(REGEX_PATTERN5);
+        NFA nfa6 = RegexToNFAConverter.convert(REGEX_PATTERN6);
+        NFA nfa7 = RegexToNFAConverter.convert(REGEX_PATTERN7);
+        NFA nfa8 = RegexToNFAConverter.convert(REGEX_PATTERN8);
+        NFA nfa9 = RegexToNFAConverter.convert(REGEX_PATTERN9);
+        NFA nfa10 = RegexToNFAConverter.convert(REGEX_PATTERN10);
+        NFA nfa11 = RegexToNFAConverter.convert(REGEX_PATTERN11);
+        NFA nfa12 = RegexToNFAConverter.convert(REGEX_PATTERN12);
+        DFA dfa = NFAToDFAConverter.convert(nfa);
+        DFA dfa1 = NFAToDFAConverter.convert(nfa1);
+        DFA dfa2 = NFAToDFAConverter.convert(nfa2);
+        DFA dfa3 = NFAToDFAConverter.convert(nfa3);
+        DFA dfa4 = NFAToDFAConverter.convert(nfa4);
+        DFA dfa5 = NFAToDFAConverter.convert(nfa5);
+        DFA dfa6 = NFAToDFAConverter.convert(nfa6);
+        DFA dfa7 = NFAToDFAConverter.convert(nfa7);
+        DFA dfa8 = NFAToDFAConverter.convert(nfa8);
+        DFA dfa9 = NFAToDFAConverter.convert(nfa9);
+        DFA dfa10 = NFAToDFAConverter.convert(nfa10);
+        DFA dfa11 = NFAToDFAConverter.convert(nfa11);
+        DFA dfa12 = NFAToDFAConverter.convert(nfa12);
+        printTransitionTable(dfa);
+        System.out.println("\nsecond re");
+        printTransitionTable(dfa1);
+        System.out.println("\nthird re");
+        printTransitionTable(dfa2);
+        System.out.println("\nfourth re");
+        printTransitionTable(dfa3);
+        System.out.println("\nfifth re");
+        printTransitionTable(dfa4);
+        System.out.println("\nsixth re");
+        printTransitionTable(dfa5);
+        System.out.println("\nseventh re");
+        printTransitionTable(dfa6);
+        System.out.println("\neighth re");
+        printTransitionTable(dfa7);
+        System.out.println("\nninth re");
+        printTransitionTable(dfa8);
+        System.out.println("\ntenth re");
+        printTransitionTable(dfa9);
+        System.out.println("\neleventh re");
+        printTransitionTable(dfa10);
+        System.out.println("\ntwelwth re");
+        printTransitionTable(dfa11);
+        System.out.println("\nthirteenth re");
+        printTransitionTable(dfa12);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package cc_A1;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+class State {
+    int id;
+    Map<Character, List<State>> transitions = new HashMap<>();
+    boolean isFinal;
+    
+    public State(int id) {
+        this.id = id;
+    }
+    
+    public void addTransition(char symbol, State state) {
+        transitions.computeIfAbsent(symbol, k -> new ArrayList<>()).add(state);
+    }
+}
+
+class NFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    Set<State> finalStates = new HashSet<>();
+    
+    public NFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+
+class DFA {
+    State start;
+    Set<State> states = new HashSet<>();
+    
+    public DFA(State start) {
+        this.start = start;
+        states.add(start);
+    }
+}
+
+class SymbolTableEntry {
+    String name, type, scope;
+    int memoryAddress;
+
+    public SymbolTableEntry(String name, String type, String scope, int memoryAddress) {
+        this.name = name;
+        this.type = type;
+        this.scope = scope;
+        this.memoryAddress = memoryAddress;
+    }
+}
+
+class SymbolTable {
+    private Map<String, SymbolTableEntry> table = new LinkedHashMap<>();
+    private int addressCounter = 1000;  // Simulating memory locations
+
+    public void insert(String name, String type, String scope) {
+        if (!table.containsKey(name)) {
+            table.put(name, new SymbolTableEntry(name, type, scope, addressCounter++));
+        }
+    }
+
+    public void printTable() {
+        System.out.println("\nSymbol Table:");
+        System.out.println("+----------------------+----------------------+------------+----------------+");
+        System.out.printf("| %-20s | %-20s | %-10s | %-14s |\n", "Symbol", "Type", "Scope", "Mem. Address");
+        System.out.println("+----------------------+----------------------+------------+----------------+");
+
+        for (SymbolTableEntry entry : table.values()) {
+            System.out.printf("| %-20s | %-20s | %-10s | 0x%-12X |\n",
+                    entry.name, entry.type, entry.scope, entry.memoryAddress);
+        }
+
+        System.out.println("+----------------------+----------------------+------------+----------------+");
+    }
+
+}
+
+public class Lexer {
+    private static final SymbolTable symbolTable = new SymbolTable();
+
+    private static final String KEYWORD = "\\b(int|return|void|show|global|local|onoff|tinytxt)\\b";
+    private static final String AGAINPLS = "\\b(aslongas|traverse)\\b";
+    private static final String DECIDER = "\\b(when|otherwise)\\b";
+    private static final String IDENTIFIER = "\\b(?!global|local)[a-z_][a-z0-9_]*\\b";
+    private static final String DECI = "\\b\\d+\\.\\d{1,5}\\b";
+    private static final String DISCRETE = "\\b\\d+\\b";
+    private static final String TINYTXT = "'[^']'";
+    private static final String ONOFF = "\\b(yep|nope)\\b";
+
+    private static final String QUOTE = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String HINT = "===.*|<<<[\\s\\S]*?>>?";
+    private static final String OPERATOR = "[=+\\-*/%]";
+    private static final String COMMASHOMMA = "[(){};,]";
+    private static final String BOOSTER = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+    private static final String WHITESPACE = "\\s+";
+
+    private static final Pattern TOKEN_PATTERNS = Pattern.compile(
+        "(?<BOOSTER>" + BOOSTER + ")|"
+        + "(?<HINT>" + HINT + ")|"
+        + "(?<KEYWORD>" + KEYWORD + ")|"
+        + "(?<AGAINPLS>" + AGAINPLS + ")|"
+        + "(?<DECIDER>" + DECIDER + ")|"
+          + "(?<ONOFF>" + ONOFF + ")|"
+
+        + "(?<IDENTIFIER>" + IDENTIFIER + ")|"
+        + "(?<DECI>" + DECI + ")|"
+        + "(?<DISCRETE>" + DISCRETE + ")|"
+        + "(?<TINYTXT>" + TINYTXT + ")|"
+        + "(?<QUOTE>" + QUOTE + ")|"
+        + "(?<OPERATOR>" + OPERATOR + ")|"
+        + "(?<COMMASHOMMA>" + COMMASHOMMA + ")|"
+        + "(?<WHITESPACE>" + WHITESPACE + ")"
+    );
+    private static String regexToRE(String regex) {
+        return regex.replaceAll("\\\\b", "")
+                    .replaceAll("\\\\s", "(space|tab|newline)+")
+                    .replaceAll("\\\\d", "[0-9]")
+                    .replaceAll("\\\\w", "[a-zA-Z0-9_]");
+    }
+    private static void printTransitionTable(DFA dfa) {
+        System.out.println("+--------+------------+------------+");
+        System.out.println("| Symbol | From State | To State   |");
+        System.out.println("+--------+------------+------------+");
+
+        for (State state : dfa.states) {
+            for (Map.Entry<Character, List<State>> entry : state.transitions.entrySet()) {
+                for (State nextState : entry.getValue()) {
+                    System.out.printf("| %-6s | %-10d | %-10d |\n",
+                            entry.getKey(), state.id, nextState.id);
+                }
+            }
+        }
+
+        System.out.println("+--------+------------+------------+");
+    }
+
+    private static final String REGEX_PATTERN = "int|return|void|show|global|local|onoff|tinytxt";
+    private static final String REGEX_PATTERN1 = "aslongas|traverse";
+    private static final String REGEX_PATTERN2 = "[=+\\-*/%]";
+    private static final String REGEX_PATTERN3 = " when|otherwise";
+    private static final String REGEX_PATTERN4 = "?!global|local)[a-z_][a-z0-9_]*";
+    private static final String REGEX_PATTERN5 = "\\d+\\.\\d{1,5}";
+    private static final String REGEX_PATTERN6 = "\\b\\d+\\b";
+    private static final String REGEX_PATTERN7 = "'[^']'";
+    private static final String REGEX_PATTERN8 = "([^\"\\\\]|\\\\.)*";
+    private static final String REGEX_PATTERN9 = "===.|<<<[\\s\\S]?>>?";
+    private static final String REGEX_PATTERN10 = "[=+\\-*/%]";
+    private static final String REGEX_PATTERN11 = "[(){};,]";
+    private static final String REGEX_PATTERN12 = "\\b\\d+(\\.\\d{1,5})?\\s*\\^\\s*\\d+(\\.\\d{1,5})?\\b";
+
+
+    public static List<Token> tokenize(String input) {
+        List<Token> tokens = new ArrayList<>();
+        Matcher matcher = TOKEN_PATTERNS.matcher(input);
+        String scope = "global"; // Start with global scope
+        int blockDepth = 0; // To track block level depth (inside nested blocks)
+
+        while (matcher.find()) {
+            // Update scope based on curly braces
+            if (matcher.group("COMMASHOMMA") != null) {
+                String match = matcher.group("COMMASHOMMA");
+                if (match.equals("{")) {
+                    blockDepth++;
+                    scope = "local"; // Entering a block means local scope
+                } else if (match.equals("}")) {
+                    blockDepth--;
+                    if (blockDepth == 0) {
+                        scope = "global"; // Exiting the block returns to global scope
+                    }
+                }
+            }
+
+            // Process each token based on the matching groups
+            if (matcher.group("KEYWORD") != null) {
+                tokens.add(new Token(TokenType.KEYWORD, matcher.group()));
+                if (matcher.group().equals("local")) {
+                    scope = "local"; // explicitly set scope if local is encountered
+                }
+                symbolTable.insert(matcher.group(), "keyword", scope);
+            } else if (matcher.group("AGAINPLS") != null)
+                tokens.add(new Token(TokenType.AGAINPLS, matcher.group()));
+            else if (matcher.group("DECIDER") != null)
+                tokens.add(new Token(TokenType.DECIDER, matcher.group()));
+            else if (matcher.group("ONOFF") != null)
+                tokens.add(new Token(TokenType.ONOFF, matcher.group()));
+
+            else if (matcher.group("IDENTIFIER") != null) {
+                tokens.add(new Token(TokenType.IDENTIFIER, matcher.group()));
+                symbolTable.insert(matcher.group(), "identifier", scope);
+            } else if (matcher.group("DECI") != null) {
+                tokens.add(new Token(TokenType.DECI, matcher.group()));
+            } else if (matcher.group("DISCRETE") != null) {
+                tokens.add(new Token(TokenType.DISCRETE, matcher.group()));
+                symbolTable.insert(matcher.group(), "discrete", scope);
+            } else if (matcher.group("TINYTXT") != null) {
+                tokens.add(new Token(TokenType.TINYTXT, matcher.group()));
+            } else if (matcher.group("QUOTE") != null) {
+                tokens.add(new Token(TokenType.QUOTE, matcher.group()));
+                symbolTable.insert(matcher.group(), "quote", scope);
+            } else if (matcher.group("HINT") != null) {
+                tokens.add(new Token(TokenType.HINT, matcher.group()));
+                symbolTable.insert(matcher.group(), "comment", scope);
+            } else if (matcher.group("BOOSTER") != null) {
+                tokens.add(new Token(TokenType.BOOSTER, matcher.group()));
+            } else if (matcher.group("OPERATOR") != null) {
+                tokens.add(new Token(TokenType.OPERATOR, matcher.group()));
+                symbolTable.insert(matcher.group(), "operator", scope);
+            } else if (matcher.group("COMMASHOMMA") != null) {
+                tokens.add(new Token(TokenType.COMMASHOMMA, matcher.group()));
+            }
+        }
+        return tokens;
+    }
+
+    public static void main(String[] args) {
+//    	  System.out.println("Regular Expressions:");
+//          System.out.println("KEYWORD: " + regexToRE(KEYWORD));
+//          System.out.println("AGAINPLS: " + regexToRE(AGAINPLS));
+//          System.out.println("DECIDER: " + regexToRE(DECIDER));
+//          System.out.println("IDENTIFIER: " + regexToRE(IDENTIFIER));
+//          System.out.println("DECI: " + regexToRE(DECI));
+//          System.out.println("DISCRETE: " + regexToRE(DISCRETE));
+//          System.out.println("TINYTXT: " + regexToRE(TINYTXT));
+//          System.out.println("QUOTE: " + regexToRE(QUOTE));
+//          System.out.println("HINT: " + regexToRE(HINT));
+//          System.out.println("OPERATOR: " + regexToRE(OPERATOR));
+//          System.out.println("COMMASHOMMA: " + regexToRE(COMMASHOMMA));
+//          System.out.println("BOOSTER: " + regexToRE(BOOSTER));
+//          System.out.println("WHITESPACE: " + regexToRE(WHITESPACE));
+        InputStream inputStream = Lexer.class.getResourceAsStream("input.txt");
+        if (inputStream == null) {
+            System.out.println("Error reading file: input.txt");
+            return;
+        }
+
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+            return;
+        }
+
+        List<Token> tokens = tokenize(content.toString());
+        System.out.println("Tokens:");
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+
+        System.out.println("\nTotal number of tokens: " + tokens.size());
+        symbolTable.printTable();
+        ErrorHandler.checkForErrors(tokens, content.toString());
+        NFA nfa = RegexToNFAConverter.convert(REGEX_PATTERN);
+        NFA nfa1 = RegexToNFAConverter.convert(REGEX_PATTERN1);
+        NFA nfa2 = RegexToNFAConverter.convert(REGEX_PATTERN2);
+        NFA nfa3 = RegexToNFAConverter.convert(REGEX_PATTERN3);
+        NFA nfa4 = RegexToNFAConverter.convert(REGEX_PATTERN4);
+        NFA nfa5 = RegexToNFAConverter.convert(REGEX_PATTERN5);
+        NFA nfa6 = RegexToNFAConverter.convert(REGEX_PATTERN6);
+        NFA nfa7 = RegexToNFAConverter.convert(REGEX_PATTERN7);
+        NFA nfa8 = RegexToNFAConverter.convert(REGEX_PATTERN8);
+        NFA nfa9 = RegexToNFAConverter.convert(REGEX_PATTERN9);
+        NFA nfa10 = RegexToNFAConverter.convert(REGEX_PATTERN10);
+        NFA nfa11 = RegexToNFAConverter.convert(REGEX_PATTERN11);
+        NFA nfa12 = RegexToNFAConverter.convert(REGEX_PATTERN12);
+        DFA dfa = NFAToDFAConverter.convert(nfa);
+        DFA dfa1 = NFAToDFAConverter.convert(nfa1);
+        DFA dfa2 = NFAToDFAConverter.convert(nfa2);
+        DFA dfa3 = NFAToDFAConverter.convert(nfa3);
+        DFA dfa4 = NFAToDFAConverter.convert(nfa4);
+        DFA dfa5 = NFAToDFAConverter.convert(nfa5);
+        DFA dfa6 = NFAToDFAConverter.convert(nfa6);
+        DFA dfa7 = NFAToDFAConverter.convert(nfa7);
+        DFA dfa8 = NFAToDFAConverter.convert(nfa8);
+        DFA dfa9 = NFAToDFAConverter.convert(nfa9);
+        DFA dfa10 = NFAToDFAConverter.convert(nfa10);
+        DFA dfa11 = NFAToDFAConverter.convert(nfa11);
+        DFA dfa12 = NFAToDFAConverter.convert(nfa12);
+        printTransitionTable(dfa);
+        System.out.println("\nsecond re");
+        printTransitionTable(dfa1);
+        System.out.println("\nthird re");
+        printTransitionTable(dfa2);
+        System.out.println("\nfourth re");
+        printTransitionTable(dfa3);
+        System.out.println("\nfifth re");
+        printTransitionTable(dfa4);
+        System.out.println("\nsixth re");
+        printTransitionTable(dfa5);
+        System.out.println("\nseventh re");
+        printTransitionTable(dfa6);
+        System.out.println("\neighth re");
+        printTransitionTable(dfa7);
+        System.out.println("\nninth re");
+        printTransitionTable(dfa8);
+        System.out.println("\ntenth re");
+        printTransitionTable(dfa9);
+        System.out.println("\neleventh re");
+        printTransitionTable(dfa10);
+        System.out.println("\ntwelwth re");
+        printTransitionTable(dfa11);
+        System.out.println("\nthirteenth re");
+        printTransitionTable(dfa12);
+    }
+}
+

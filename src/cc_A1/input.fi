@@ -1,0 +1,31 @@
+int launch() {
+
+    global int x, a = 2, b = 3, c;
+    local int y;
+    onoff 5j;
+    int %f=2
+    int myVar=6;
+    int Myvarw=6;
+    x = a + b * c;
+    int u 5;
+    global int myVar =3
+   local int correct_var = 3; 
+   int d=2.5;
+  tinytxt a='a';
+  tinytt b='b';
+  onoff n=yep;
+    y = a ^ b;
+    z = 2.5^2;
+    "hi"
+    "hey
+    p
+    when
+    otherwise
+    aslongas
+    traverse
+    ===hi
+    <<<multi-line
+    comment>>>
+    show("The value of x is %d", x);$
+    return 0;
+}
